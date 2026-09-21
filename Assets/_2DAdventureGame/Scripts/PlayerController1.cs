@@ -18,7 +18,7 @@ public InputAction MoveAction;
     Vector2 move = MoveAction.ReadValue<Vector2>();
 Debug.Log(move);
 Vector2 position = (Vector2)transform.position
-+ move * 3.0f * Time.deltaTime;
++ move * 2.0f * Time.deltaTime;
 transform.position = position;
     }
 }
