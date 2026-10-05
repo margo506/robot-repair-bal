@@ -1,25 +1,24 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class PlayerController1 : MonoBehaviour
-{
-public InputAction MoveAction;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        //QualitySettings.vSyncCount = 0;
-        //Application.targetFrameRate = 10;
-        MoveAction.Enable();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    Vector2 move = MoveAction.ReadValue<Vector2>();
-Debug.Log(move);
-Vector2 position = (Vector2)transform.position
-+ move * 2.0f * Time.deltaTime;
-transform.position = position;
-    }
-}
-
+using UnityEngine; 
+using UnityEngine.InputSystem; 
+public class PlayerController1 : MonoBehaviour 
+{ 
+public InputAction MoveAction; 
+Rigidbody2D rigidbody2d; 
+Vector2 move; 
+void Start() 
+{ 
+MoveAction.Enable(); 
+rigidbody2d = GetComponent<Rigidbody2D>(); 
+} 
+void Update() 
+{ 
+move = MoveAction.ReadValue<Vector2>(); 
+Debug.Log(move); 
+} 
+void FixedUpdate() 
+{ 
+Vector2 position = (Vector2)rigidbody2d.position 
++ move * 3.0f * Time.deltaTime; 
+rigidbody2d.MovePosition(position); 
+} 
+} 
