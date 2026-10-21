@@ -19,12 +19,19 @@ animator = GetComponent<Animator>();
 }
 void Update()
 {
-timer -= Time.deltaTime;
-if (timer < 0)
-{
-direction = -direction;
-timer = changeTime;
-}
+    timer -= Time.deltaTime;
+
+    if (timer < 0)
+    {
+        direction = -direction;
+
+        if (Random.value < 0.5f)
+        {
+            vertical = !vertical;
+        }
+
+        timer = changeTime;
+    }
 }
 void FixedUpdate()
 {
