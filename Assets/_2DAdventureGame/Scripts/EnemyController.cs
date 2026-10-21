@@ -9,6 +9,7 @@ public float changeTime = 3.0f;
 float timer;
 int direction = 1;
 Animator animator;
+bool broken = true;
 
 void Start()
 {
@@ -27,6 +28,7 @@ timer = changeTime;
 }
 void FixedUpdate()
 {
+    if (!broken) { return; }
 Vector2 position = rigidbody2d.position;
 if (vertical)
 {
@@ -50,5 +52,11 @@ if (player != null)
 {
 player.ChangeHealth(-1);
 }
+}
+public void Fix()
+{
+broken = false;
+rigidbody2d.simulated = false;
+animator.SetTrigger("Fixed");
 }
 }
