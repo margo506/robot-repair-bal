@@ -75,7 +75,7 @@ animator.SetTrigger("Hit");
 }
 currentHealth = Mathf.Clamp(currentHealth + amount,
 0, maxHealth);
-Debug.Log(currentHealth + "/" + maxHealth);
+UIHandler.instance.SetHealthValue(currentHealth / (float)maxHealth);
 }
 void Launch()
 {
