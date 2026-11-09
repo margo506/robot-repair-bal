@@ -10,6 +10,7 @@ float timer;
 int direction = 1;
 Animator animator;
 bool broken = true;
+public bool isBroken { get { return broken; } }
 
 void Start()
 {

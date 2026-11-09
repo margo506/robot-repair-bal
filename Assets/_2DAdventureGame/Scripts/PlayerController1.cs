@@ -16,6 +16,8 @@ Animator animator;
 Vector2 moveDirection = new Vector2(1, 0);
 public GameObject projectilePrefab;
 public InputAction LaunchAction;
+public InputAction TalkAction;
+private NonPlayerCharacter lastNonPlayerCharacter;
 
 void Start()
 {
@@ -24,6 +26,7 @@ rigidbody2d = GetComponent<Rigidbody2D>();
 currentHealth = maxHealth;
 animator = GetComponent<Animator>();
 LaunchAction.Enable();
+TalkAction.Enable();
 }
 void Update()
 {
@@ -52,6 +55,25 @@ if (isInvincible)
 if (LaunchAction.WasPressedThisFrame())
 {
     Launch();
+}
+RaycastHit2D hit = Physics2D.Raycast(
+rigidbody2d.position + Vector2.up * 0.2f,
+moveDirection, 1.5f, LayerMask.GetMask("NPC"));
+if (hit.collider != null)
+{
+NonPlayerCharacter npc =
+hit.collider.GetComponent<NonPlayerCharacter>();
+npc.dialogueBubble.SetActive(true);
+lastNonPlayerCharacter = npc;
+FindFriend();
+}
+else
+{
+if (lastNonPlayerCharacter != null)
+{
+lastNonPlayerCharacter.dialogueBubble.SetActive(false);
+lastNonPlayerCharacter = null;
+}
 }
 
 }
@@ -86,5 +108,12 @@ Projectile projectile =
 projectileObject.GetComponent<Projectile>();
 projectile.Launch(moveDirection, 300);
 animator.SetTrigger("Launch");
+}
+void FindFriend()
+{
+if (TalkAction.WasPressedThisFrame())
+{
+UIHandler.instance.DisplayDialogue();
+}
 }
 }
