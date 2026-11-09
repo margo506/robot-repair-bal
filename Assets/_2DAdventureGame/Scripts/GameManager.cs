@@ -5,6 +5,8 @@ public class GameManager : MonoBehaviour
 public PlayerController1 player;
 NewMonoBehaviourScript[] enemies;
 public UIHandler uiHandler;
+bool gameOver = false;
+
 void Start()
 {
 enemies = FindObjectsByType<NewMonoBehaviourScript>(
@@ -16,16 +18,22 @@ SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 }
 void Update()
 {
-if (player.health <= 0)
-{
-uiHandler.DisplayLoseScreen();
-Invoke(nameof(ReloadScene), 3f);
-}
-if (AllEnemiesFixed())
-{
-uiHandler.DisplayWinScreen();
-Invoke(nameof(ReloadScene), 3f);
-}
+    if (gameOver)
+        return;
+
+    if (player.health <= 0)
+    {
+        uiHandler.DisplayLoseScreen();
+        gameOver = true;
+        Invoke(nameof(ReloadScene), 3f);
+    }
+
+    if (AllEnemiesFixed())
+    {
+        uiHandler.DisplayWinScreen();
+        gameOver = true;
+        Invoke(nameof(ReloadScene), 3f);
+    }
 }
 bool AllEnemiesFixed()
 {
