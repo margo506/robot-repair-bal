@@ -25,12 +25,6 @@ void Update()
     if (timer < 0)
     {
         direction = -direction;
-
-        if (Random.value < 0.5f)
-        {
-            vertical = !vertical;
-        }
-
         timer = changeTime;
     }
 }
