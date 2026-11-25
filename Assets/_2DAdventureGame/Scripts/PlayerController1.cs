@@ -18,6 +18,10 @@ public GameObject projectilePrefab;
 public InputAction LaunchAction;
 public InputAction TalkAction;
 private NonPlayerCharacter lastNonPlayerCharacter;
+public AudioClip playerHitSound;
+public AudioClip playerWalkSound;
+AudioSource walkAudioSource;
+public AudioClip projectileSound;
 
 void Start()
 {
@@ -25,6 +29,13 @@ MoveAction.Enable();
 rigidbody2d = GetComponent<Rigidbody2D>();
 currentHealth = maxHealth;
 animator = GetComponent<Animator>();
+walkAudioSource = GetComponent<AudioSource>();
+
+if (walkAudioSource != null)
+{
+    walkAudioSource.clip = playerWalkSound;
+    walkAudioSource.loop = true;
+}
 LaunchAction.Enable();
 TalkAction.Enable();
 }
@@ -40,6 +51,20 @@ moveDirection.Normalize();
 animator.SetFloat("Look X", moveDirection.x);
 animator.SetFloat("Look Y", moveDirection.y);
 animator.SetFloat("Speed", move.magnitude);
+if (walkAudioSource != null && playerWalkSound != null)
+{
+    if (move.magnitude > 0.1f)
+    {
+        if (!walkAudioSource.isPlaying)
+        {
+            walkAudioSource.Play();
+        }
+    }
+    else
+    {
+        walkAudioSource.Stop();
+    }
+}
 if (isInvincible)
 {
 damageCooldown -= Time.deltaTime;
@@ -83,32 +108,59 @@ Vector2 position = (Vector2)rigidbody2d.position
 + move * speed * Time.deltaTime;
 rigidbody2d.MovePosition(position);
 }
+
 public void ChangeHealth(int amount)
 {
-if (amount < 0)
-{
-if (isInvincible)
-{
-return;
+    if (amount < 0)
+    {
+        if (isInvincible)
+        {
+            return;
+        }
+
+        isInvincible = true;
+        damageCooldown = timeInvincible;
+        animator.SetTrigger("Hit");
+
+        if (playerHitSound != null)
+        {
+            AudioSource.PlayClipAtPoint(
+                playerHitSound,
+                transform.position
+            );
+        }
+    }
+
+    currentHealth = Mathf.Clamp(currentHealth + amount,
+        0, maxHealth);
+
+    UIHandler.instance.SetHealthValue(
+        currentHealth / (float)maxHealth
+    );
 }
-isInvincible = true;
-damageCooldown = timeInvincible;
-animator.SetTrigger("Hit");
-}
-currentHealth = Mathf.Clamp(currentHealth + amount,
-0, maxHealth);
-UIHandler.instance.SetHealthValue(currentHealth / (float)maxHealth);
-}
+
+
 void Launch()
 {
-GameObject projectileObject = Instantiate(projectilePrefab,
-rigidbody2d.position + Vector2.up * 0.5f,
-Quaternion.identity);
-Projectile projectile =
-projectileObject.GetComponent<Projectile>();
-projectile.Launch(moveDirection, 300);
-animator.SetTrigger("Launch");
+    GameObject projectileObject = Instantiate(projectilePrefab,
+        rigidbody2d.position + Vector2.up * 0.5f,
+        Quaternion.identity);
+
+    Projectile projectile =
+        projectileObject.GetComponent<Projectile>();
+
+    projectile.Launch(moveDirection, 300);
+    animator.SetTrigger("Launch");
+
+    if (projectileSound != null)
+    {
+        AudioSource.PlayClipAtPoint(
+            projectileSound,
+            transform.position
+        );
+    }
 }
+
 void FindFriend()
 {
 if (TalkAction.WasPressedThisFrame())
